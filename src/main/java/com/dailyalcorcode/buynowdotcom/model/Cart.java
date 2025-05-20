@@ -28,4 +28,14 @@ public class Cart {
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CartItem> items = new HashSet<>();
+
+    public void removeItem(CartItem cartItem) {
+        this.items.remove(cartItem);
+        cartItem.setCart(null);
+        updateTotalAmount();
+    }
+
+    private void updateTotalAmount() {
+        
+    }
 }
