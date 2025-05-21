@@ -5,6 +5,7 @@ import com.dailyalcorcode.buynowdotcom.dtos.ImageDto;
 import com.dailyalcorcode.buynowdotcom.model.Image;
 import com.dailyalcorcode.buynowdotcom.response.ApiResponse;
 import com.dailyalcorcode.buynowdotcom.service.image.IImageService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,4 +50,35 @@ public class ImageController {
                 .header(CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"").body(resource);
     }
 
+    //Assigment 2
+    /*
+        implement the remaining 2 end-points
+     */
+    // 1. update image
+
+    @PutMapping("/image/{imageId}")
+    public ResponseEntity<ApiResponse> updateImage(@PathVariable Long imageId,
+                                                   @RequestParam("file") MultipartFile file) {
+        try {
+            imageService.updateImage(imageId, file);
+            return ResponseEntity.ok(new ApiResponse("Image updated successfully", null));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND)
+                    .body(new ApiResponse("Error: " + e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse("Error: " + e.getMessage(), null));
+        }
+    }
+
+    // 2. delete image
+    @DeleteMapping("/image/{imageId}")
+    public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId) {
+        try {
+            imageService.deleteImage(imageId);
+            return ResponseEntity.ok(new ApiResponse("Image deleted successfully", null));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("Error occurred: " + e.getMessage(), null));
+        }
+    }
 }
