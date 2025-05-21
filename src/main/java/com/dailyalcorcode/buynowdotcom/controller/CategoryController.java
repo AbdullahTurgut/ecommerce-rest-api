@@ -4,6 +4,7 @@ import com.dailyalcorcode.buynowdotcom.model.Category;
 import com.dailyalcorcode.buynowdotcom.response.ApiResponse;
 import com.dailyalcorcode.buynowdotcom.service.category.ICategoryService;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,10 +54,43 @@ public class CategoryController {
     }
 
     // Assignment
-    /* Now you are going to implement the remaining 3 end-points
+    /* Now you are going to implement the remaining 3 end-points */
 
     // 1. find category by name
+
+    @GetMapping("/category/{name}")
+    public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String name) {
+        try {
+            Category theCategory = categoryService.findCategoryByName(name);
+            return ResponseEntity.ok(new ApiResponse("Found", theCategory));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse("Error: " + e.getMessage(), null));
+        }
+    }
+
     // 2. delete category
+    @DeleteMapping("/category/{categoryId}")
+    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long categoryId) {
+        try {
+            categoryService.deleteCategory(categoryId);
+            return ResponseEntity.ok(new ApiResponse("Deleted Succces", null));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND)
+                    .body(new ApiResponse("Error: " + e.getMessage(), null));
+        }
+    }
+
+
     // 3. update category
-     */
+    @PutMapping("/category/{categoryId}")
+    public ResponseEntity<ApiResponse> updateCategory(@PathVariable Long categoryId, @RequestBody Category category) {
+        try {
+            Category updatedCategory = categoryService.updateCategory(categoryId, category);
+            return ResponseEntity.ok(new ApiResponse("Success", updatedCategory));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("Error: " + e.getMessage(), null));
+        }
+    }
+
 }
