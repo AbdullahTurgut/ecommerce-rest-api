@@ -103,7 +103,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/products/{category}")
+    @GetMapping("/by-category/{category}")
     public ResponseEntity<ApiResponse> getProductsByCategory(@PathVariable String category) {
         try {
             List<Product> products = productService.getProductsByCategory(category);
@@ -114,7 +114,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/products/{brand}")
+    @GetMapping("/by-brand/{brand}")
     public ResponseEntity<ApiResponse> getProductsByBrand(@PathVariable String brand) {
         try {
             List<Product> products = productService.getProductsByBrand(brand);
@@ -125,7 +125,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/products/{name}")
+    @GetMapping("/by-name/{name}")
     public ResponseEntity<ApiResponse> getProductsByName(@PathVariable String name) {
         try {
             List<Product> products = productService.getProductsByName(name);
