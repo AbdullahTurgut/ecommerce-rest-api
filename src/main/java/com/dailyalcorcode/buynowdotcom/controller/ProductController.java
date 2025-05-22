@@ -46,13 +46,9 @@ public class ProductController {
 
     @PostMapping("/add-product")
     public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest request) {
-        try {
-            Product product = productService.addProduct(request);
-            ProductDto productDto = productService.convertToDto(product);
-            return ResponseEntity.ok(new ApiResponse("Product added successfully", productDto));
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+        Product product = productService.addProduct(request);
+        ProductDto productDto = productService.convertToDto(product);
+        return ResponseEntity.ok(new ApiResponse("Product added successfully", productDto));
     }
 
     @PutMapping("/{productId}/update")
@@ -69,14 +65,8 @@ public class ProductController {
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId) {
-        try {
-            productService.deleteProductById(productId);
-            return ResponseEntity.ok(new ApiResponse("Product deleted successfully!", null));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+        productService.deleteProductById(productId);
+        return ResponseEntity.ok(new ApiResponse("Product deleted successfully!", null));
     }
 
     @GetMapping("/by/category-and-brand")
