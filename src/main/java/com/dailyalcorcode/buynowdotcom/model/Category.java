@@ -1,5 +1,6 @@
 package com.dailyalcorcode.buynowdotcom.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,8 @@ public class Category {
     private Long id;
     private String name;
 
+    // To break the stack overflow use annotation
+    @JsonIgnore // this
     @OneToMany(mappedBy = "category")
     private List<Product> products;
 

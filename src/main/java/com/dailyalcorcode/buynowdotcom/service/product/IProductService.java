@@ -1,5 +1,6 @@
 package com.dailyalcorcode.buynowdotcom.service.product;
 
+import com.dailyalcorcode.buynowdotcom.dtos.ProductDto;
 import com.dailyalcorcode.buynowdotcom.model.Product;
 import com.dailyalcorcode.buynowdotcom.request.AddProductRequest;
 import com.dailyalcorcode.buynowdotcom.request.ProductUpdateRequest;
@@ -28,4 +29,10 @@ public interface IProductService {
     List<Product> getProductsByBrand(String brand);
 
     List<Product> getProductsByName(String name);
+
+    // Helper mapper List<product> to List<productDto>
+    List<ProductDto> getConvertedProducts(List<Product> products);
+
+    // Helper mapper product to productDto
+    ProductDto convertToDto(Product product);
 }
