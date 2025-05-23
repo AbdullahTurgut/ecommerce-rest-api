@@ -36,6 +36,17 @@ public class Cart {
     }
 
     private void updateTotalAmount() {
-        
+
+    }
+
+    public void addItem(CartItem cartItem) {
+        this.items.add(cartItem);
+        cartItem.setCart(this);
+        updateTotalAmount();
+    }
+
+    public void clearCart() {
+        this.items.clear();
+        updateTotalAmount();
     }
 }
