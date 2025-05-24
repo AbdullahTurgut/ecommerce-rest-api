@@ -1,13 +1,15 @@
 package com.dailyalcorcode.buynowdotcom.service.user;
 
+import com.dailyalcorcode.buynowdotcom.dtos.CartDto;
 import com.dailyalcorcode.buynowdotcom.dtos.OrderDto;
 import com.dailyalcorcode.buynowdotcom.dtos.UserDto;
-import com.dailyalcorcode.buynowdotcom.model.Order;
 import com.dailyalcorcode.buynowdotcom.model.User;
-import com.dailyalcorcode.buynowdotcom.repository.OrderRepository;
+import com.dailyalcorcode.buynowdotcom.repository.CartItemRepository;
 import com.dailyalcorcode.buynowdotcom.repository.UserRepository;
 import com.dailyalcorcode.buynowdotcom.request.CreateUserRequest;
 import com.dailyalcorcode.buynowdotcom.request.UpdateUserRequest;
+import com.dailyalcorcode.buynowdotcom.service.cart.ICartService;
+import com.dailyalcorcode.buynowdotcom.service.order.IOrderService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,10 @@ public class UserService implements IUserService {
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-    private final OrderRepository orderRepository;
+    private final CartItemRepository cartItemRepository;
+    private final IOrderService orderService;
+    private final ICartService cartService;
+
 
     @Override
     public User createUser(CreateUserRequest request) {
@@ -66,11 +71,10 @@ public class UserService implements IUserService {
     @Override
     public UserDto convertToUserDto(User user) {
         UserDto userDto = modelMapper.map(user, UserDto.class);
-        List<Order> orders = orderRepository.findByUserId(user.getId());
-        List<OrderDto> orderDtos = orders.stream()
-                .map(order -> modelMapper.map(order, OrderDto.class))
-                .toList();
-        userDto.setOrders(orderDtos);
+        CartDto cartDto = cartService.convertToDto(user.getCart());
+        List<OrderDto> orderDtoList = orderService.getUserOrders(user.getId());
+        userDto.setOrders(orderDtoList);
+        userDto.setCart(cartDto);
         return userDto;
     }
 }

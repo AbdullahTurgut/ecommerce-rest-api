@@ -1,6 +1,5 @@
 package com.dailyalcorcode.buynowdotcom.dtos;
 
-import com.dailyalcorcode.buynowdotcom.model.Cart;
 import lombok.Data;
 
 import java.util.List;
@@ -11,6 +10,6 @@ public class UserDto {
     private String firstName;
     private String lastName;
     private String email;
-    private Cart cart;
+    private CartDto cart;
     private List<OrderDto> orders;
 }

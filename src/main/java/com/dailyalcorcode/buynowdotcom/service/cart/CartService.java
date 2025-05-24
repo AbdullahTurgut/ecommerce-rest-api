@@ -1,11 +1,14 @@
 package com.dailyalcorcode.buynowdotcom.service.cart;
 
+import com.dailyalcorcode.buynowdotcom.dtos.CartDto;
+import com.dailyalcorcode.buynowdotcom.dtos.CartItemDto;
 import com.dailyalcorcode.buynowdotcom.model.Cart;
 import com.dailyalcorcode.buynowdotcom.model.User;
 import com.dailyalcorcode.buynowdotcom.repository.CartItemRepository;
 import com.dailyalcorcode.buynowdotcom.repository.CartRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -17,7 +20,7 @@ public class CartService implements ICartService {
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
-
+    private final ModelMapper modelMapper;
 
     @Override
     public Cart getCart(Long cartId) {
@@ -34,9 +37,8 @@ public class CartService implements ICartService {
 
     @Override
     public void clearCart(Long cartId) {
-        // check for cart is already exists
         Cart cart = getCart(cartId);
-        cartItemRepository.deleteAllByCartId(cart);
+        cartItemRepository.deleteAllByCartId(cartId);
         cart.clearCart();
         cartRepository.deleteById(cartId);
     }
@@ -54,5 +56,16 @@ public class CartService implements ICartService {
     public BigDecimal getTotalPrice(Long cartId) {
         Cart cart = getCart(cartId);
         return cart.getTotalAmount();
+    }
+
+
+    // helper method for convert to cartDto
+    @Override
+    public CartDto convertToDto(Cart cart) {
+        CartDto cartDto = modelMapper.map(cart, CartDto.class);
+        cartDto.setCartItems(cart.getItems().stream()
+                .map(cartItem -> modelMapper.map(cartItem, CartItemDto.class))
+                .toList());
+        return cartDto;
     }
 }
