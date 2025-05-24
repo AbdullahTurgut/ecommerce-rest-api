@@ -1,5 +1,6 @@
 package com.dailyalcorcode.buynowdotcom.controller;
 
+import com.dailyalcorcode.buynowdotcom.dtos.OrderDto;
 import com.dailyalcorcode.buynowdotcom.model.Order;
 import com.dailyalcorcode.buynowdotcom.response.ApiResponse;
 import com.dailyalcorcode.buynowdotcom.service.order.IOrderService;
@@ -19,12 +20,14 @@ public class OrderController {
     @PostMapping("/user/order")
     public ResponseEntity<ApiResponse> placeOrder(@RequestParam Long userId) {
         Order order = orderService.placeOrder(userId);
-        return ResponseEntity.ok(new ApiResponse("Order placed successfully", order));
+        OrderDto orderDto = orderService.convertToOrderDto(order);
+        return ResponseEntity.ok(new ApiResponse("Order placed successfully", orderDto));
     }
 
     @GetMapping("/user/{userId}/order")
     public ResponseEntity<ApiResponse> getUserOrders(@PathVariable Long userId) {
         List<Order> orderList = orderService.getUserOrders(userId);
-        return ResponseEntity.ok(new ApiResponse("Success!", orderList));
+        List<OrderDto> orderDtoList = orderService.getConvertedOrders(orderList);
+        return ResponseEntity.ok(new ApiResponse("Success!", orderDtoList));
     }
 }

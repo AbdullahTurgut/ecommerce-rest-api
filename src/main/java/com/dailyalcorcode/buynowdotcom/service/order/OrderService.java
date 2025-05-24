@@ -1,5 +1,6 @@
 package com.dailyalcorcode.buynowdotcom.service.order;
 
+import com.dailyalcorcode.buynowdotcom.dtos.OrderDto;
 import com.dailyalcorcode.buynowdotcom.enums.OrderStatus;
 import com.dailyalcorcode.buynowdotcom.model.Cart;
 import com.dailyalcorcode.buynowdotcom.model.Order;
@@ -10,6 +11,7 @@ import com.dailyalcorcode.buynowdotcom.repository.ProductRepository;
 import com.dailyalcorcode.buynowdotcom.repository.UserRepository;
 import com.dailyalcorcode.buynowdotcom.service.cart.ICartService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,7 @@ public class OrderService implements IOrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final ICartService cartService;
+    private final ModelMapper modelMapper;
 
     @Transactional
     @Override
@@ -76,5 +79,18 @@ public class OrderService implements IOrderService {
     @Override
     public List<Order> getUserOrders(Long userId) {
         return orderRepository.findByUserId(userId);
+    }
+
+
+    // Helper mapper List<Order> to List<OrderDto>
+    @Override
+    public List<OrderDto> getConvertedOrders(List<Order> orders) {
+        return orders.stream().map(this::convertToOrderDto).toList();
+    }
+
+    // Helper mapper order to orderDto
+    @Override
+    public OrderDto convertToOrderDto(Order order) {
+        return modelMapper.map(order, OrderDto.class);
     }
 }
