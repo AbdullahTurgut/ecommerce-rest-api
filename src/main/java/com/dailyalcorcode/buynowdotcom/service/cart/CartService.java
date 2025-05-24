@@ -34,9 +34,8 @@ public class CartService implements ICartService {
 
     @Override
     public void clearCart(Long cartId) {
-        // check for cart is already exists
         Cart cart = getCart(cartId);
-        cartItemRepository.deleteAllByCartId(cart);
+        cartItemRepository.deleteAllByCartId(cartId);
         cart.clearCart();
         cartRepository.deleteById(cartId);
     }
