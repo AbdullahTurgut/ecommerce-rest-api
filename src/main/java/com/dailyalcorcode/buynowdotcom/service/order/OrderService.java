@@ -6,6 +6,7 @@ import com.dailyalcorcode.buynowdotcom.model.Cart;
 import com.dailyalcorcode.buynowdotcom.model.Order;
 import com.dailyalcorcode.buynowdotcom.model.OrderItem;
 import com.dailyalcorcode.buynowdotcom.model.Product;
+import com.dailyalcorcode.buynowdotcom.repository.OrderItemRepository;
 import com.dailyalcorcode.buynowdotcom.repository.OrderRepository;
 import com.dailyalcorcode.buynowdotcom.repository.ProductRepository;
 import com.dailyalcorcode.buynowdotcom.repository.UserRepository;
@@ -29,6 +30,7 @@ public class OrderService implements IOrderService {
     private final ProductRepository productRepository;
     private final ICartService cartService;
     private final ModelMapper modelMapper;
+    private final OrderItemRepository orderItemRepository;
 
     @Transactional
     @Override
@@ -76,15 +78,11 @@ public class OrderService implements IOrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    @Override
-    public List<Order> getUserOrders(Long userId) {
-        return orderRepository.findByUserId(userId);
-    }
-
 
     // Helper mapper List<Order> to List<OrderDto>
     @Override
-    public List<OrderDto> getConvertedOrders(List<Order> orders) {
+    public List<OrderDto> getUserOrders(Long userId) {
+        List<Order> orders = orderRepository.findByUserId(userId);
         return orders.stream().map(this::convertToOrderDto).toList();
     }
 

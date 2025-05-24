@@ -26,8 +26,7 @@ public class OrderController {
 
     @GetMapping("/user/{userId}/order")
     public ResponseEntity<ApiResponse> getUserOrders(@PathVariable Long userId) {
-        List<Order> orderList = orderService.getUserOrders(userId);
-        List<OrderDto> orderDtoList = orderService.getConvertedOrders(orderList);
+        List<OrderDto> orderDtoList = orderService.getUserOrders(userId);
         return ResponseEntity.ok(new ApiResponse("Success!", orderDtoList));
     }
 }

@@ -9,10 +9,9 @@ public interface IOrderService {
 
     Order placeOrder(Long userId);
 
-    List<Order> getUserOrders(Long userId);
 
     // Helper mapper List<Order> to List<OrderDto>
-    List<OrderDto> getConvertedOrders(List<Order> orders);
+    List<OrderDto> getUserOrders(Long userId);
 
     // Helper mapper order to orderDto
     OrderDto convertToOrderDto(Order order);
