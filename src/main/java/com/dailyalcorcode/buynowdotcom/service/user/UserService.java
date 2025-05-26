@@ -1,22 +1,19 @@
 package com.dailyalcorcode.buynowdotcom.service.user;
 
-import com.dailyalcorcode.buynowdotcom.dtos.CartDto;
-import com.dailyalcorcode.buynowdotcom.dtos.OrderDto;
 import com.dailyalcorcode.buynowdotcom.dtos.UserDto;
 import com.dailyalcorcode.buynowdotcom.model.User;
-import com.dailyalcorcode.buynowdotcom.repository.CartItemRepository;
 import com.dailyalcorcode.buynowdotcom.repository.UserRepository;
 import com.dailyalcorcode.buynowdotcom.request.CreateUserRequest;
 import com.dailyalcorcode.buynowdotcom.request.UpdateUserRequest;
-import com.dailyalcorcode.buynowdotcom.service.cart.ICartService;
-import com.dailyalcorcode.buynowdotcom.service.order.IOrderService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,10 +22,7 @@ public class UserService implements IUserService {
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-    private final CartItemRepository cartItemRepository;
-    private final IOrderService orderService;
-    private final ICartService cartService;
-
+    private final PasswordEncoder encoder;
 
     @Override
     public User createUser(CreateUserRequest request) {
@@ -36,10 +30,10 @@ public class UserService implements IUserService {
                 .filter(user -> !userRepository.existsByEmail(user.getEmail()))
                 .map(req -> {
                     User user = new User();
-                    user.setFirstName(req.getFirstName());
-                    user.setLastName(req.getLastName());
-                    user.setEmail(req.getEmail());
-                    user.setPassword(req.getPassword());
+                    user.setFirstName(request.getFirstName());
+                    user.setLastName(request.getLastName());
+                    user.setEmail(request.getEmail());
+                    user.setPassword(encoder.encode(request.getPassword()));
                     return userRepository.save(user);
                 }).orElseThrow(() -> new EntityExistsException(request.getEmail() + " already exists!"));
     }
@@ -70,11 +64,14 @@ public class UserService implements IUserService {
     // converting
     @Override
     public UserDto convertToUserDto(User user) {
-        UserDto userDto = modelMapper.map(user, UserDto.class);
-        CartDto cartDto = cartService.convertToDto(user.getCart());
-        List<OrderDto> orderDtoList = orderService.getUserOrders(user.getId());
-        userDto.setOrders(orderDtoList);
-        userDto.setCart(cartDto);
-        return userDto;
+        return modelMapper.map(user, UserDto.class);
+    }
+
+    @Override
+    public User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return Optional.ofNullable(userRepository.findByEmail(email))
+                .orElseThrow(() -> new EntityNotFoundException("Log in required!"));
     }
 }
