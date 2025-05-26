@@ -6,10 +6,8 @@ import com.dailyalcorcode.buynowdotcom.model.Cart;
 import com.dailyalcorcode.buynowdotcom.model.Order;
 import com.dailyalcorcode.buynowdotcom.model.OrderItem;
 import com.dailyalcorcode.buynowdotcom.model.Product;
-import com.dailyalcorcode.buynowdotcom.repository.OrderItemRepository;
 import com.dailyalcorcode.buynowdotcom.repository.OrderRepository;
 import com.dailyalcorcode.buynowdotcom.repository.ProductRepository;
-import com.dailyalcorcode.buynowdotcom.repository.UserRepository;
 import com.dailyalcorcode.buynowdotcom.service.cart.ICartService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,12 +23,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService implements IOrderService {
 
-    private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final ICartService cartService;
     private final ModelMapper modelMapper;
-    private final OrderItemRepository orderItemRepository;
 
     @Transactional
     @Override
