@@ -30,6 +30,8 @@ public interface IProductService {
 
     List<Product> getProductsByName(String name);
 
+    List<Product> findDistinctProductsByName();
+
     // Helper mapper List<product> to List<productDto>
     List<ProductDto> getConvertedProducts(List<Product> products);
 
