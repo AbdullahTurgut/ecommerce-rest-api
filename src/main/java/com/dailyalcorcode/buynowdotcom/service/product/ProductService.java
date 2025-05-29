@@ -155,6 +155,11 @@ public class ProductService implements IProductService {
         return new ArrayList<>(distinctProductMap.values());
     }
 
+    @Override
+    public List<String> getAllDistinctBrands() {
+        return productRepository.findAll().stream()
+                .map(Product::getBrand).distinct().toList();
+    }
     // ==============================================================================================
 
     // Helper mapper List<product> to List<productDto>

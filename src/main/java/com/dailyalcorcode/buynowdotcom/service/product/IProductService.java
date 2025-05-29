@@ -32,6 +32,8 @@ public interface IProductService {
 
     List<Product> findDistinctProductsByName();
 
+    List<String> getAllDistinctBrands();
+
     // Helper mapper List<product> to List<productDto>
     List<ProductDto> getConvertedProducts(List<Product> products);
 

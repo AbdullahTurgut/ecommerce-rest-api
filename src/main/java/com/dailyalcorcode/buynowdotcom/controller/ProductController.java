@@ -99,4 +99,9 @@ public class ProductController {
         List<ProductDto> productDtos = productService.getConvertedProducts(products);
         return ResponseEntity.ok(new ApiResponse("Found", productDtos));
     }
+
+    @GetMapping("/distinct/brands")
+    public ResponseEntity<ApiResponse> getAllDistinctBrands() {
+        return ResponseEntity.ok(new ApiResponse("Found", productService.getAllDistinctBrands()));
+    }
 }
