@@ -1,5 +1,6 @@
 package com.dailyalcorcode.buynowdotcom.service.cart;
 
+import com.dailyalcorcode.buynowdotcom.dtos.CartDto;
 import com.dailyalcorcode.buynowdotcom.model.Cart;
 import com.dailyalcorcode.buynowdotcom.model.User;
 
@@ -17,4 +18,6 @@ public interface ICartService {
 
     BigDecimal getTotalPrice(Long cartId);
 
+    // model mapper
+    CartDto convertToDto(Cart cart);
 }

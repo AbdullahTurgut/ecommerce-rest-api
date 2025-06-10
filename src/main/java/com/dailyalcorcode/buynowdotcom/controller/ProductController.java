@@ -50,10 +50,10 @@ public class ProductController {
         return ResponseEntity.ok(new ApiResponse("Product updated successfully", productDto));
     }
 
-    @DeleteMapping("/{productId}")
+    @DeleteMapping("/{productId}/delete")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId) {
         productService.deleteProductById(productId);
-        return ResponseEntity.ok(new ApiResponse("Product deleted successfully!", null));
+        return ResponseEntity.ok(new ApiResponse("Product deleted successfully!", productId));
     }
 
     @GetMapping("/by/category-and-brand")
@@ -75,6 +75,13 @@ public class ProductController {
     @GetMapping("/by-category/{category}")
     public ResponseEntity<ApiResponse> getProductsByCategory(@PathVariable String category) {
         List<Product> products = productService.getProductsByCategory(category);
+        List<ProductDto> productDtos = productService.getConvertedProducts(products);
+        return ResponseEntity.ok(new ApiResponse("Products found by category", productDtos));
+    }
+
+    @GetMapping("/category/{categoryId}/products")
+    public ResponseEntity<ApiResponse> getProductsByCategoryId(@PathVariable Long categoryId) {
+        List<Product> products = productService.getProductsByCategoryId(categoryId);
         List<ProductDto> productDtos = productService.getConvertedProducts(products);
         return ResponseEntity.ok(new ApiResponse("Products found by category", productDtos));
     }

@@ -1,5 +1,6 @@
 package com.dailyalcorcode.buynowdotcom.service.cart;
 
+import com.dailyalcorcode.buynowdotcom.dtos.CartItemDto;
 import com.dailyalcorcode.buynowdotcom.model.Cart;
 import com.dailyalcorcode.buynowdotcom.model.CartItem;
 import com.dailyalcorcode.buynowdotcom.model.Product;
@@ -8,6 +9,7 @@ import com.dailyalcorcode.buynowdotcom.repository.CartRepository;
 import com.dailyalcorcode.buynowdotcom.service.product.IProductService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -21,8 +23,10 @@ public class CartItemService implements ICartItemService {
     private final ICartService cartService;
     private final IProductService productService;
 
+    private final ModelMapper mapper;
+
     @Override
-    public void addItemToCart(Long cartId, Long productId, int quantity) {
+    public CartItem addItemToCart(Long cartId, Long productId, int quantity) {
         Cart cart = cartService.getCart(cartId);
         Product product = productService.getProductById(productId);
         CartItem cartItem = cart.getItems()
@@ -42,6 +46,7 @@ public class CartItemService implements ICartItemService {
         cart.addItem(cartItem);
         cartItemRepository.save(cartItem);
         cartRepository.save(cart);
+        return cartItem;
     }
 
     @Override
@@ -78,4 +83,10 @@ public class CartItemService implements ICartItemService {
                 .findFirst().orElseThrow(() -> new EntityNotFoundException("Cart not found!"));
     }
 
+
+    // model mapper area
+    @Override
+    public CartItemDto covertToDto(CartItem cartItem) {
+        return mapper.map(cartItem, CartItemDto.class);
+    }
 }

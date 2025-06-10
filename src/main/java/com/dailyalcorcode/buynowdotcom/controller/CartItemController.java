@@ -1,7 +1,7 @@
 package com.dailyalcorcode.buynowdotcom.controller;
 
-import com.dailyalcorcode.buynowdotcom.model.Cart;
-import com.dailyalcorcode.buynowdotcom.model.User;
+import com.dailyalcorcode.buynowdotcom.dtos.CartItemDto;
+import com.dailyalcorcode.buynowdotcom.model.CartItem;
 import com.dailyalcorcode.buynowdotcom.response.ApiResponse;
 import com.dailyalcorcode.buynowdotcom.service.cart.ICartItemService;
 import com.dailyalcorcode.buynowdotcom.service.cart.ICartService;
@@ -25,10 +25,11 @@ public class CartItemController {
             @RequestParam Long productId,
             @RequestParam int quantity) {
 
-        User user = userService.getAuthenticatedUser();
-        Cart userCart = cartService.initializeNewCartForUser(user);
-        cartItemService.addItemToCart(userCart.getId(), productId, quantity);
-        return ResponseEntity.ok(new ApiResponse("Item added successfully!", null));
+//        User user = userService.getAuthenticatedUser();
+//        Cart userCart = cartService.initializeNewCartForUser(user)
+        CartItem cartItem = cartItemService.addItemToCart(1L, productId, quantity);
+        CartItemDto cartItemDto = cartItemService.covertToDto(cartItem);
+        return ResponseEntity.ok(new ApiResponse("Item added successfully!", cartItemDto));
     }
 
     @DeleteMapping("/cart/{cartId}/item/{productId}/remove")

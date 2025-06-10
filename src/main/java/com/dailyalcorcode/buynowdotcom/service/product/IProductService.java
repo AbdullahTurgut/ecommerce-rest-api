@@ -39,4 +39,7 @@ public interface IProductService {
 
     // Helper mapper product to productDto
     ProductDto convertToDto(Product product);
+
+    List<Product> getProductsByCategoryId(Long categoryId);
+    
 }
