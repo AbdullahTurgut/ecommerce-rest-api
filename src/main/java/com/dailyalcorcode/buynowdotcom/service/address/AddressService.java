@@ -1,9 +1,11 @@
 package com.dailyalcorcode.buynowdotcom.service.address;
 
+import com.dailyalcorcode.buynowdotcom.dtos.AddressDto;
 import com.dailyalcorcode.buynowdotcom.model.Address;
 import com.dailyalcorcode.buynowdotcom.repository.AddressRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 public class AddressService implements IAddressService {
 
     private final AddressRepository addressRepository;
+    private final ModelMapper mapper;
 
     @Override
     public List<Address> createAddress(List<Address> addressList) {
@@ -49,5 +52,17 @@ public class AddressService implements IAddressService {
             existingAddress.setAddressType(address.getAddressType());
             return addressRepository.save(existingAddress);
         }).orElseThrow(() -> new EntityNotFoundException("Address not found"));
+    }
+
+    // handling for coverting dto
+
+    @Override
+    public List<AddressDto> getConvertedAddresses(List<Address> addresses) {
+        return addresses.stream().map(this::convertToDto).toList();
+    }
+
+    @Override
+    public AddressDto convertToDto(Address address) {
+        return mapper.map(address, AddressDto.class);
     }
 }
