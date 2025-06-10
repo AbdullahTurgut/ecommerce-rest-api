@@ -2,6 +2,7 @@ package com.dailyalcorcode.buynowdotcom.service.user;
 
 import com.dailyalcorcode.buynowdotcom.dtos.UserDto;
 import com.dailyalcorcode.buynowdotcom.model.User;
+import com.dailyalcorcode.buynowdotcom.repository.AddressRepository;
 import com.dailyalcorcode.buynowdotcom.repository.UserRepository;
 import com.dailyalcorcode.buynowdotcom.request.CreateUserRequest;
 import com.dailyalcorcode.buynowdotcom.request.UpdateUserRequest;
@@ -23,6 +24,7 @@ public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder encoder;
+    private final AddressRepository addressRepository;
 
     @Override
     public User createUser(CreateUserRequest request) {
@@ -34,7 +36,15 @@ public class UserService implements IUserService {
                     user.setLastName(request.getLastName());
                     user.setEmail(request.getEmail());
                     user.setPassword(encoder.encode(request.getPassword()));
-                    return userRepository.save(user);
+                    User savedUser = userRepository.save(user);
+                    Optional.ofNullable(req.getAddresses()).ifPresent(addressList -> {
+                        addressList.forEach(address -> {
+                            address.setUser(savedUser);
+                            addressRepository.save(address);
+                        });
+                    });
+
+                    return savedUser;
                 }).orElseThrow(() -> new EntityExistsException(request.getEmail() + " already exists!"));
     }
 
