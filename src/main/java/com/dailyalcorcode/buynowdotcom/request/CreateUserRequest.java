@@ -11,5 +11,5 @@ public class CreateUserRequest {
     private String lastName;
     private String email;
     private String password;
-    private List<Address> addresses;
+    private List<Address> addressList;
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IAddressService {
 
-    List<Address> createAddress(List<Address> addressList);
+    List<Address> createAddress(Long userId, List<Address> addressList);
 
     List<Address> getUserAddresses(Long userId);
 

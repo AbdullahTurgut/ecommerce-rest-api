@@ -1,8 +1,10 @@
 package com.dailyalcorcode.buynowdotcom.service.user;
 
 import com.dailyalcorcode.buynowdotcom.dtos.UserDto;
+import com.dailyalcorcode.buynowdotcom.model.Role;
 import com.dailyalcorcode.buynowdotcom.model.User;
 import com.dailyalcorcode.buynowdotcom.repository.AddressRepository;
+import com.dailyalcorcode.buynowdotcom.repository.RoleRepository;
 import com.dailyalcorcode.buynowdotcom.repository.UserRepository;
 import com.dailyalcorcode.buynowdotcom.request.CreateUserRequest;
 import com.dailyalcorcode.buynowdotcom.request.UpdateUserRequest;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -26,8 +29,12 @@ public class UserService implements IUserService {
     private final PasswordEncoder encoder;
     private final AddressRepository addressRepository;
 
+    private final RoleRepository roleRepository;
+
     @Override
     public User createUser(CreateUserRequest request) {
+        Role userRole = Optional.ofNullable(roleRepository.findByName("ROLE_USER"))
+                .orElseThrow(() -> new EntityNotFoundException("Role not found"));
         return Optional.of(request)
                 .filter(user -> !userRepository.existsByEmail(user.getEmail()))
                 .map(req -> {
@@ -36,8 +43,9 @@ public class UserService implements IUserService {
                     user.setLastName(request.getLastName());
                     user.setEmail(request.getEmail());
                     user.setPassword(encoder.encode(request.getPassword()));
+                    user.setRoles(Set.of(userRole)); // Collection olarak bekler
                     User savedUser = userRepository.save(user);
-                    Optional.ofNullable(req.getAddresses()).ifPresent(addressList -> {
+                    Optional.ofNullable(req.getAddressList()).ifPresent(addressList -> {
                         addressList.forEach(address -> {
                             address.setUser(savedUser);
                             addressRepository.save(address);

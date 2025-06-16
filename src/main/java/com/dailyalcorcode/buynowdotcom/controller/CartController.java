@@ -17,7 +17,7 @@ public class CartController {
 
     @GetMapping("/user/{userId}/cart")
     public ResponseEntity<ApiResponse> getUserCart(@PathVariable Long userId) {
-        Cart cart = cartService.getCart(userId);
+        Cart cart = cartService.getCartByUserId(userId);
         CartDto cartDto = cartService.convertToDto(cart);
         return ResponseEntity.ok(new ApiResponse("Success", cartDto));
     }

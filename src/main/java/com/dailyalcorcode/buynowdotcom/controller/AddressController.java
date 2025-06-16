@@ -17,9 +17,9 @@ public class AddressController {
 
     private final IAddressService addressService;
 
-    @PostMapping("/create")
-    public ResponseEntity<ApiResponse> createAddress(@RequestBody List<Address> addressList) {
-        List<Address> addresses = addressService.createAddress(addressList);
+    @PostMapping("/{userId}/create")
+    public ResponseEntity<ApiResponse> createAddress(@PathVariable Long userId, @RequestBody List<Address> addressList) {
+        List<Address> addresses = addressService.createAddress(userId, addressList);
         List<AddressDto> addressDtoList = addressService.getConvertedAddresses(addresses);
         return ResponseEntity.ok(new ApiResponse("Address created successfully", addressDtoList));
     }
@@ -31,7 +31,7 @@ public class AddressController {
         return ResponseEntity.ok(new ApiResponse("Success", addressDtoList));
     }
 
-    @GetMapping("/address/{userId}")
+    @GetMapping("/address/{addressId}")
     public ResponseEntity<ApiResponse> getAddressById(@PathVariable Long addressId) {
         Address address = addressService.getAddressById(addressId);
         AddressDto addressDto = addressService.convertToDto(address);

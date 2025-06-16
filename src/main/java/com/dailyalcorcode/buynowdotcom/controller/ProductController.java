@@ -8,6 +8,7 @@ import com.dailyalcorcode.buynowdotcom.response.ApiResponse;
 import com.dailyalcorcode.buynowdotcom.service.product.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +36,7 @@ public class ProductController {
 
     // Assignment 3 =====================================================================
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/add-product")
     public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest request) {
         Product product = productService.addProduct(request);
@@ -42,6 +44,7 @@ public class ProductController {
         return ResponseEntity.ok(new ApiResponse("Product added successfully", productDto));
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{productId}/update")
     public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long productId,
                                                      @RequestBody ProductUpdateRequest request) {
@@ -50,6 +53,7 @@ public class ProductController {
         return ResponseEntity.ok(new ApiResponse("Product updated successfully", productDto));
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{productId}/delete")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId) {
         productService.deleteProductById(productId);

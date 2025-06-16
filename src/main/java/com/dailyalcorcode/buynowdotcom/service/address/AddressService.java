@@ -3,23 +3,30 @@ package com.dailyalcorcode.buynowdotcom.service.address;
 import com.dailyalcorcode.buynowdotcom.dtos.AddressDto;
 import com.dailyalcorcode.buynowdotcom.model.Address;
 import com.dailyalcorcode.buynowdotcom.repository.AddressRepository;
+import com.dailyalcorcode.buynowdotcom.service.user.IUserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AddressService implements IAddressService {
 
     private final AddressRepository addressRepository;
+    private final IUserService userService;
     private final ModelMapper mapper;
 
     @Override
-    public List<Address> createAddress(List<Address> addressList) {
-        return addressRepository.saveAll(addressList);
+    public List<Address> createAddress(Long userId, List<Address> addressList) {
+        return Optional.ofNullable(userService.getUserById(userId))
+                .map(user -> addressList.stream().peek(address -> address.setUser(user)).toList())
+                .map(addressRepository::saveAll)
+                .orElse(Collections.emptyList());
     }
 
     @Override
@@ -49,6 +56,7 @@ public class AddressService implements IAddressService {
             existingAddress.setState(address.getState());
             existingAddress.setCity(address.getCity());
             existingAddress.setStreet(address.getStreet());
+            existingAddress.setPhone(address.getPhone());
             existingAddress.setAddressType(address.getAddressType());
             return addressRepository.save(existingAddress);
         }).orElseThrow(() -> new EntityNotFoundException("Address not found"));
@@ -57,8 +65,8 @@ public class AddressService implements IAddressService {
     // handling for coverting dto
 
     @Override
-    public List<AddressDto> getConvertedAddresses(List<Address> addresses) {
-        return addresses.stream().map(this::convertToDto).toList();
+    public List<AddressDto> getConvertedAddresses(List<Address> addressList) {
+        return addressList.stream().map(this::convertToDto).toList();
     }
 
     @Override
