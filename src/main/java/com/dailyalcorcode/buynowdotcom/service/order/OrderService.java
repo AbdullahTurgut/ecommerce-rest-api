@@ -8,7 +8,11 @@ import com.dailyalcorcode.buynowdotcom.model.OrderItem;
 import com.dailyalcorcode.buynowdotcom.model.Product;
 import com.dailyalcorcode.buynowdotcom.repository.OrderRepository;
 import com.dailyalcorcode.buynowdotcom.repository.ProductRepository;
+import com.dailyalcorcode.buynowdotcom.request.PaymentRequest;
 import com.dailyalcorcode.buynowdotcom.service.cart.ICartService;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
+import com.stripe.param.PaymentIntentCreateParams;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -72,6 +76,21 @@ public class OrderService implements IOrderService {
                 .map(item -> item.getPrice()
                         .multiply(new BigDecimal(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+
+    // payment intent
+    @Override
+    public String createPaymentIntent(PaymentRequest request) throws StripeException {
+        long amountInSmallestUnit = Math.round(request.getAmount() * 100); // expecting "cents" so multiply 100
+        PaymentIntent intent = PaymentIntent.create(
+                PaymentIntentCreateParams.builder()
+                        .setAmount(amountInSmallestUnit)
+                        .setCurrency(request.getCurrency())
+                        .addPaymentMethodType("card")
+                        .build()
+        );
+        return intent.getClientSecret();
     }
 
 
