@@ -24,7 +24,8 @@ public class CartService implements ICartService {
 
     @Override
     public Cart getCart(Long cartId) {
-        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new EntityNotFoundException("Cart Not Found!"));
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new EntityNotFoundException("Cart not found!"));
         BigDecimal totalAmount = cart.getTotalAmount();
         cart.setTotalAmount(totalAmount);
         return cartRepository.save(cart);
@@ -35,6 +36,7 @@ public class CartService implements ICartService {
         return cartRepository.findByUserId(userId);
     }
 
+
     @Override
     public void clearCart(Long cartId) {
         Cart cart = getCart(cartId);
@@ -42,6 +44,7 @@ public class CartService implements ICartService {
         cart.clearCart();
         cartRepository.deleteById(cartId);
     }
+
 
     @Override
     public Cart initializeNewCartForUser(User user) {

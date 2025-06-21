@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.dailyalcorcode</groupId>
-    <artifactId>buynowdotcom</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>buynowdotcom</name>
+    <artifactId>zencargodotcom</artifactId>
+    <version>0.1</version>
+    <name>zencargodotcom</name>
     <description>A simple ecommerce application demo</description>
     <url/>
     <licenses>

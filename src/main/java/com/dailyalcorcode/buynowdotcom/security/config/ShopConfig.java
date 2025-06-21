@@ -89,7 +89,7 @@ public class ShopConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173")
+                        .allowedOrigins("http://localhost:5173", "http://zencargodotcom.s3-website.eu-north-1.amazonaws.com")
                         .allowedMethods("*")
                         .allowedHeaders("*")
                         .allowCredentials(true);

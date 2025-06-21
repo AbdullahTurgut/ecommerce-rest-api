@@ -25,6 +25,7 @@ public class CartItemService implements ICartItemService {
 
     private final ModelMapper mapper;
 
+
     @Override
     public CartItem addItemToCart(Long cartId, Long productId, int quantity) {
         Cart cart = cartService.getCart(cartId);
@@ -33,7 +34,6 @@ public class CartItemService implements ICartItemService {
                 .stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst().orElse(new CartItem());
-
         if (cartItem.getId() == null) {
             cartItem.setCart(cart);
             cartItem.setProduct(product);
@@ -48,6 +48,7 @@ public class CartItemService implements ICartItemService {
         cartRepository.save(cart);
         return cartItem;
     }
+
 
     @Override
     public void removeItemFromCart(Long cartId, Long productId) {
@@ -67,10 +68,8 @@ public class CartItemService implements ICartItemService {
                     item.setUnitPrice(item.getProduct().getPrice());
                     item.setTotalPrice();
                 });
-        BigDecimal totalAmount = cart.getItems().stream()
-                .map(CartItem::getTotalPrice)
+        BigDecimal totalAmount = cart.getItems().stream().map(CartItem::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
         cart.setTotalAmount(totalAmount);
         cartRepository.save(cart);
     }
@@ -78,7 +77,8 @@ public class CartItemService implements ICartItemService {
     @Override
     public CartItem getCartItem(Long cartId, Long productId) {
         Cart cart = cartService.getCart(cartId);
-        return cart.getItems().stream()
+        return cart.getItems()
+                .stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst().orElseThrow(() -> new EntityNotFoundException("Cart not found!"));
     }
