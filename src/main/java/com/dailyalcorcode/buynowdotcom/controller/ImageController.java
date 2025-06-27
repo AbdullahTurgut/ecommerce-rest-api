@@ -5,6 +5,7 @@ import com.dailyalcorcode.buynowdotcom.dtos.ImageDto;
 import com.dailyalcorcode.buynowdotcom.model.Image;
 import com.dailyalcorcode.buynowdotcom.response.ApiResponse;
 import com.dailyalcorcode.buynowdotcom.service.image.IImageService;
+import com.dailyalcorcode.buynowdotcom.service.llm.LLMService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -24,6 +26,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 public class ImageController {
 
     private final IImageService imageService;
+    private final LLMService llmService;
 
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse> uploadImages(@RequestParam("productId") Long productId,
@@ -39,6 +42,15 @@ public class ImageController {
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(image.getFileType()))
                 .header(CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"").body(resource);
+    }
+
+
+    // interaction with image description
+
+    @GetMapping("/describe-image")
+    public ResponseEntity<ApiResponse> describeImage(@RequestParam("image") MultipartFile image) throws IOException {
+        String imageDescription = llmService.describeImage(image);
+        return ResponseEntity.ok(new ApiResponse("The image description ", imageDescription));
     }
 
     //Assigment 2
