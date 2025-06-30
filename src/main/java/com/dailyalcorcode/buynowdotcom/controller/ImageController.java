@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -46,13 +45,13 @@ public class ImageController {
 
 
     // interaction with image description
-
+/*
     @GetMapping("/describe-image")
     public ResponseEntity<ApiResponse> describeImage(@RequestParam("image") MultipartFile image) throws IOException {
         String imageDescription = llmService.describeImage(image);
         return ResponseEntity.ok(new ApiResponse("The image description ", imageDescription));
     }
-
+*/
     //Assigment 2
     /*
         implement the remaining 2 end-points

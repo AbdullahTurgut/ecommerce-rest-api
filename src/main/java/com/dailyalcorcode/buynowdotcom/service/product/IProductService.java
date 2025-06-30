@@ -4,7 +4,9 @@ import com.dailyalcorcode.buynowdotcom.dtos.ProductDto;
 import com.dailyalcorcode.buynowdotcom.model.Product;
 import com.dailyalcorcode.buynowdotcom.request.AddProductRequest;
 import com.dailyalcorcode.buynowdotcom.request.ProductUpdateRequest;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface IProductService {
@@ -34,6 +36,8 @@ public interface IProductService {
 
     List<String> getAllDistinctBrands();
 
+    List<Product> searchProductsByImage(MultipartFile image) throws IOException;
+
     // Helper mapper List<product> to List<productDto>
     List<ProductDto> getConvertedProducts(List<Product> products);
 
@@ -41,5 +45,5 @@ public interface IProductService {
     ProductDto convertToDto(Product product);
 
     List<Product> getProductsByCategoryId(Long categoryId);
-    
+
 }

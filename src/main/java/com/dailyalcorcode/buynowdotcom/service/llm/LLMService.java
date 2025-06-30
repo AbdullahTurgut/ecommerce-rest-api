@@ -28,7 +28,21 @@ public class LLMService {
                 .create(chatModel)
                 .prompt()
                 .user(promptUserSpec -> promptUserSpec.text("""
-                        Describe the image.""").media(MediaType.parseMediaType(Objects.requireNonNull(image.getContentType())), resource))
+                                Generate a concise, detailed textual description of the image strictly for visual similarity search. \
+                                       Please follow these rules:
+                                       - Limit the description to 2-3 short sentences or a list of key attributes.
+                                       - Focus ONLY on clearly visible, distinctive visual features such as:
+                                         * Colors, patterns, textures, shapes, and materials.
+                                         * Specific object types (e.g., 'red leather handbag', 'wooden dining table').
+                                         * Brand names or logos if clearly visible.
+                                         * Scene context ONLY if obvious (e.g., 'on a beach', 'in a kitchen').
+                                       - Do NOT include subjective opinions, guesses, or generic terms like 'product', 'item',
+                                        'electronics device', 'communication device', etc.
+                                       - Avoid filler words or vague language.
+                                       - Use simple, direct language suitable for automated similarity matching.
+                                       Provide the description in a clear, structured format (e.g., comma-separated attributes or bullet points).
+                                      \s""")
+                        .media(MediaType.parseMediaType(Objects.requireNonNull(image.getContentType())), resource))
                 .call()
                 .content();
 

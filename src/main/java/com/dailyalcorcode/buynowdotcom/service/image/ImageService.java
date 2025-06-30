@@ -4,9 +4,11 @@ import com.dailyalcorcode.buynowdotcom.dtos.ImageDto;
 import com.dailyalcorcode.buynowdotcom.model.Image;
 import com.dailyalcorcode.buynowdotcom.model.Product;
 import com.dailyalcorcode.buynowdotcom.repository.ImageRepository;
+import com.dailyalcorcode.buynowdotcom.service.chroma.IChromaService;
 import com.dailyalcorcode.buynowdotcom.service.product.IProductService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,11 +18,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ImageService implements IImageService {
     private final ImageRepository imageRepository;
     private final IProductService productService;
+    private final IChromaService chromaService;
 
     @Override
     public Image getImageById(Long imageId) {
@@ -73,6 +77,9 @@ public class ImageService implements IImageService {
 
                 imageRepository.save(savedImage);
 
+                String savedDescription = chromaService.saveImageEmbeddings(productId, file);
+                log.info("Embeddings saved {} : ", savedDescription);
+                
                 ImageDto imageDto = new ImageDto();
                 imageDto.setId(savedImage.getId());
                 imageDto.setFileName(savedImage.getFileName());

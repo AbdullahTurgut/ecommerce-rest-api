@@ -6,12 +6,15 @@ import com.dailyalcorcode.buynowdotcom.model.*;
 import com.dailyalcorcode.buynowdotcom.repository.*;
 import com.dailyalcorcode.buynowdotcom.request.AddProductRequest;
 import com.dailyalcorcode.buynowdotcom.request.ProductUpdateRequest;
+import com.dailyalcorcode.buynowdotcom.service.chroma.ChromaService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +32,7 @@ public class ProductService implements IProductService {
     private final OrderItemRepository orderItemRepository;
     private final ImageRepository imageRepository;
     private final ModelMapper modelMapper;
+    private final ChromaService chromaService;
 
     @Override
     public Product addProduct(AddProductRequest request) {
@@ -161,6 +165,14 @@ public class ProductService implements IProductService {
                 .map(Product::getBrand).distinct().toList();
     }
     // ==============================================================================================
+
+
+    @Override
+    public List<Product> searchProductsByImage(MultipartFile image) throws IOException {
+        List<Long> productIds = chromaService.searchImageSimilarity(image);
+        return productRepository.findAllById(productIds);
+    }
+
 
     // Helper mapper List<product> to List<productDto>
     @Override
